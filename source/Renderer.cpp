@@ -24,8 +24,42 @@ namespace dae {
 
 	Renderer::~Renderer()
 	{
-		delete m_pDevice;
-		delete m_pDeviceContext;
+		if (m_pDeviceContext)
+		{
+			m_pDeviceContext->ClearState();
+			m_pDeviceContext->Flush();
+			m_pDeviceContext->Release();
+		}
+
+		if (m_pRenderTargetView)
+		{
+			m_pRenderTargetView->Release();
+		}
+
+		if (m_pRenderTargetBuffer)
+		{
+			m_pRenderTargetBuffer->Release();
+		}
+
+		if (m_pSwapChain)
+		{
+			m_pSwapChain->Release();
+		}
+
+		if (m_pDepthStencilView)
+		{
+			m_pDepthStencilView->Release();
+		}
+
+		if (m_pDepthStencilBuffer)
+		{
+			m_pDepthStencilBuffer->Release();
+		}
+
+		if (m_pDevice)
+		{
+			m_pDevice->Release();
+		}
 	}
 
 	void Renderer::Update(const Timer* pTimer)
@@ -57,7 +91,7 @@ namespace dae {
 		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 		HRESULT result = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, createDeviceFlags, &featureLevel,
-			1, D3D11_SDK_VERSION, &m_pDevice,nullptr, &m_pDeviceContext);
+			1, D3D11_SDK_VERSION, &m_pDevice, nullptr, &m_pDeviceContext);
 		if (FAILED(result))
 		{
 			return result;
@@ -160,6 +194,7 @@ namespace dae {
 		viewport.MaxDepth = 1.f;
 		m_pDeviceContext->RSSetViewports(1, &viewport);
 
+		pDxgiFactory->Release();
 		return result;
 	}
 }
