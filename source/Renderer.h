@@ -1,4 +1,5 @@
 #pragma once
+#include "Mesh3D.h"
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -33,9 +34,15 @@ namespace dae
 		ID3D11DepthStencilView* m_pDepthStencilView{nullptr};
 		ID3D11Resource* m_pRenderTargetBuffer{ nullptr };
 		ID3D11RenderTargetView* m_pRenderTargetView{ nullptr };
+		Mesh3D* m_pMesh3D{ };
 
 		//DIRECTX
 		HRESULT InitializeDirectX();
+
+		struct Vertex {
+			Vector3 position;
+			ColorRGB color;
+		};
 		//...
 	};
 }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Renderer.h"
+#include "Mesh3D.h"
 
 namespace dae {
 
@@ -19,7 +20,16 @@ namespace dae {
 		else
 		{
 			std::cout << "DirectX initialization failed!\n";
+			return;
 		}
+		std::vector<dae::Vertex> vertices{
+			{{0.f,3.f,2.f},{1.f,0.f,0.f}},
+			{{3.f, -3.f, 2.f},{0.f,0.f,1.f}},
+			{{-3.f, -3.f, 2.f},{0.f,1.f,0.f}},
+		};
+
+		std::vector<uint32_t> indices{ 0,1,2 };
+		m_pMesh3D = new Mesh3D(m_pDevice, vertices, indices);
 	}
 
 	Renderer::~Renderer()
@@ -60,11 +70,18 @@ namespace dae {
 		{
 			m_pDevice->Release();
 		}
+
+		if (m_pMesh3D)
+		{
+			delete m_pMesh3D;
+			m_pMesh3D = nullptr;
+		}
 	}
 
 	void Renderer::Update(const Timer* pTimer)
 	{
 
+	
 	}
 
 
@@ -77,6 +94,8 @@ namespace dae {
 
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, &clearColor.r);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+
+		m_pMesh3D->Render(m_pDeviceContext);
 
 		m_pSwapChain->Present(0, 0);
 	}
@@ -108,8 +127,8 @@ namespace dae {
 		DXGI_SWAP_CHAIN_DESC swapChainDesc{};
 		swapChainDesc.BufferDesc.Width = m_Width;
 		swapChainDesc.BufferDesc.Height = m_Height;
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = 1.f;
-		swapChainDesc.BufferDesc.RefreshRate.Denominator = 60.f;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 60;
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
